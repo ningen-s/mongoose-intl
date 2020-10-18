@@ -1,10 +1,10 @@
 # mongoose-intl
-Mongoose schema plugin for multilingual fields
+Mongoose schema plugin for multilingual fields (with Ningen adaptations to support more types than only strings).
 
 ## Installation
 
 ```sh
-$ npm install mongoose-intl --save
+$ npm install ningen-s/mongoose-intl --save
 ```
 
 ## Overview
@@ -24,7 +24,7 @@ var BlogPost = new Schema({
 });
 ```
 
-*Note:* `intl` option can be enabled for String type only.
+*Note:* `intl` option can be enabled for String and Mixed type only.
 
 Adding plugin to the schema:
 
@@ -68,7 +68,7 @@ mongoose.plugin(mongooseIntl, { languages: ['en', 'de', 'fr'], defaultLanguage: 
 `intl`-enabled field is converted to a virtual path and continue interacting as a string, not an object.
 It means that you can read it and write to it any string, and it will be stored under default language setting.
 
-Other languages values can be set by using `model.set()` method. Pass an object with multiple languages instead of the string to set all values together. See examples below. 
+Other languages values can be set by using `model.set()` method. Pass an object with multiple languages instead of the string to set all values together. See examples below.
 
 Multilingual fields can be set with 3 ways:
 
@@ -101,10 +101,10 @@ var BlogPostModel = mongoose.model('Post', BlogPost);
 
 BlogPostModel.findById('some id', function (err, post) {
   if (err) return handleError(err);
-  
+
   post.title; // 'Title on default language'
-  
-  post.get('title.de'); // 'Another German title'  
+
+  post.get('title.de'); // 'Another German title'
 });
 
 ```
@@ -174,21 +174,21 @@ Usage examples:
 ```js
 BlogPostModel.find({}, function (err, posts) {
   if (err) return handleError(err);
-  
+
   console.log(JSON.stringify(posts)); // [{ _id: '...', title: 'Title 1 on default language' },
                                       //  { _id: '...', title: 'Title 2 on default language' }, ...]
-  
+
   posts[0].getLanguages(); // [ 'en', 'de', 'fr' ]
   posts[0].getLanguage(); // 'en'
-  
+
   posts[0].setLanguage('de');
   console.log(JSON.stringify(posts)); // [{ _id: '...', title: 'Another German title' },
                                       //  { _id: '...', title: 'Title 2 on default language' }, ...]
-  
+
   BlogPostModel.setDefaultLanguage('fr'); // schema-level language change (see documentation below)
   console.log(JSON.stringify(posts)); // [{ _id: '...', title: 'Another German title' }, // still 'de'
                                       //  { _id: '...', title: 'French title 2' }, ...]
-  
+
   posts[0].unsetLanguage();
   console.log(JSON.stringify(posts)); // [{ _id: '...', title: 'French title 1' },
                                       //  { _id: '...', title: 'French title 2' }, ...]
@@ -207,13 +207,13 @@ Usage examples:
 ```js
 BlogPostModel.find({}, function (err, posts) {
   if (err) return handleError(err);
-  
+
   console.log(JSON.stringify(posts)); // [{ _id: '...', title: 'Title 1 on default language' },
                                       //  { _id: '...', title: 'Title 2 on default language' }, ...]
-  
+
   BlogPostModel.getLanguages(); // [ 'en', 'de', 'fr' ]
   BlogPostModel.getDefaultLanguage(); // 'en'
-  
+
   BlogPostModel.setDefaultLanguage('de');
   console.log(JSON.stringify(posts)); // [{ _id: '...', title: 'Another German title 1' },
                                       //  { _id: '...', title: 'Another German title 2' }, ...]
@@ -250,7 +250,7 @@ mongoose.setDefaultLanguage(userLang);
 // .find() method is async and callback function can be executed during another event loop
 BlogPostModel.find({}, function (err, posts) {
   if (err) return handleError(err);
-  
+
   response.write(JSON.stringify(posts));
   response.end();
 });
